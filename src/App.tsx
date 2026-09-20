@@ -1,35 +1,48 @@
-import {
-  ArrowRight,
-  Braces,
-  CheckCircle2,
-  LockKeyhole,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, Braces, LockKeyhole, Zap } from "lucide-react";
 import { useState } from "react";
 import InstallSnippet from "./components/InstallSnippet";
 import Playground from "./components/Playground";
-import PlaygroundHeader from "./components/PlaygroundHeader";
+import SiteFooter from "./components/SiteFooter";
+import SiteHeader from "./components/SiteHeader";
 import { INITIAL_CONSTRAINT, type ConstraintSnapshot } from "./data/playground";
-import { Badge, CodeHighlight } from "./theme";
+import {
+  ButtonLink,
+  Card,
+  CodeHighlight,
+  Eyebrow,
+  IconTile,
+  type IconTileTone,
+} from "./theme";
 import { constraintCode } from "./utils/constraintCode";
 
-const FEATURES = [
+const FEATURES: Array<{
+  icon: typeof Braces;
+  tone: IconTileTone;
+  title: string;
+  text: string;
+}> = [
   {
     icon: Braces,
+    tone: "teal",
     title: "Use the schema you have",
-    text: "Enums, nested objects, arrays, bounds, unions, and local references are enforced during generation.",
+    text: "Enums, nested objects, arrays, bounds, unions, and local references are enforced while the model generates.",
   },
   {
     icon: Zap,
-    title: "No parsing-and-retry loop",
-    text: "Invalid tokens are never selected. The completed output already satisfies the constraint.",
+    tone: "yellow",
+    title: "No parse-and-retry loop",
+    text: "Invalid tokens are never selected. The completed output already satisfies the constraint, on the first try.",
   },
   {
     icon: LockKeyhole,
+    tone: "pink",
     title: "Entirely local",
-    text: "Built for Transformers.js. Model inference and constrained decoding both happen in the browser.",
+    text: "Built for Transformers.js. Model inference and constrained decoding both happen in the browser, on your device.",
   },
 ];
+
+const NPM_URL =
+  "https://www.npmjs.com/package/@huggingface/transformers-structured-output";
 
 export default function App() {
   const [constraint, setConstraint] =
@@ -45,98 +58,108 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      <div className="grain pointer-events-none fixed inset-0" />
-      <div className="relative mx-auto max-w-page px-5 sm:px-8 lg:px-10">
-        <PlaygroundHeader webGpu={webGpu} />
+    <div id="top" className="flex min-h-dvh flex-col">
+      <SiteHeader webGpu={webGpu} />
 
-        <main className="pb-20">
-          <section className="flex items-center gap-8 pt-14 pb-12 lg:pt-20">
-            <div className="w-1/2">
-              <h1 className="max-w-3xl font-serif text-5xl leading-none font-semibold tracking-tight text-balance sm:text-7xl">
+      <main className="flex-1">
+        <section className="relative py-18">
+          <div className="wrap relative z-10 grid grid-cols-[minmax(0,1fr)] items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="min-w-0 animate-rise">
+              <Eyebrow>Transformers.js</Eyebrow>
+              <h1 className="display mt-6">
                 Constrained
                 <br />
                 generation for
                 <br />
-                <span className="italic text-coral">Transformers.js</span>
+                <span className="text-brand">Transformers.js</span>.
               </h1>
-            </div>
-            <div className="lg:pb-1 w-1/2">
-              <p className="font-serif text-xl leading-8 text-slate-600">
+              <p className="lead mt-5 max-w-xl">
                 Constrain generation to a JSON Schema or a regex. Get valid
                 output on the first try, directly in the browser.
               </p>
-              <div className="mt-6">
-                <InstallSnippet />
+              <div className="mt-8 flex flex-wrap gap-4">
+                <ButtonLink href="#playground">
+                  Try it live <ArrowRight className="size-4" strokeWidth={3} />
+                </ButtonLink>
+                <ButtonLink
+                  href={NPM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  variant="secondary"
+                >
+                  Read the docs
+                </ButtonLink>
               </div>
             </div>
-          </section>
+            <div className="grid min-w-0 animate-rise place-items-center [animation-delay:90ms] lg:justify-items-end">
+              <InstallSnippet />
+            </div>
+          </div>
+        </section>
 
+        <section id="playground" className="wrap section scroll-mt-6">
           <Playground onConstraintChange={setConstraint} />
+        </section>
 
-          <section className="grid gap-4 py-16 md:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, title, text }) => (
-              <div
-                key={title}
-                className="rounded-xl border border-line bg-white p-5 shadow-card"
-              >
-                <span className="mb-4 grid h-9 w-9 place-items-center rounded-lg bg-green-50 text-green-700">
-                  <Icon className="h-4 w-4" />
-                </span>
-                <h3 className="text-sm font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
-              </div>
+        <section className="wrap section">
+          <Eyebrow>Why constrain</Eyebrow>
+          <h2 className="section-title mt-5 mb-8">
+            Small models, dependable output
+          </h2>
+          <div className="grid gap-7 md:grid-cols-3">
+            {FEATURES.map(({ icon, tone, title, text }) => (
+              <Card key={title}>
+                <IconTile icon={icon} tone={tone} />
+                <h3 className="mt-5 text-xl">{title}</h3>
+                <p className="mt-2 mb-0">{text}</p>
+              </Card>
             ))}
-          </section>
+          </div>
+        </section>
 
-          <section className="grid overflow-hidden rounded-xl border border-slate-800 bg-slate-950 shadow-xl lg:grid-cols-3">
-            <div className="p-6 sm:p-8">
-              <Badge tone="green" className="mb-5">
-                The whole integration
-              </Badge>
-              <h2 className="font-serif text-3xl font-semibold text-white">
+        <section className="wrap section mb-24">
+          <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <div className="min-w-0">
+              <Eyebrow>The whole integration</Eyebrow>
+              <h2 className="section-title mt-5">
                 One processor.
                 <br />
                 One generate call.
               </h2>
-              <p className="mt-4 max-w-md text-sm leading-6 text-slate-400">
+              <p className="mt-4 max-w-md">
                 Pass the processor as a standard Transformers.js logits
                 processor. No server, grammar compiler, or runtime dependency
                 required. The snippet mirrors the constraint in the playground.
               </p>
-              <a
-                href="https://www.npmjs.com/package/@huggingface/transformers-structured-output"
-                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-green-400 hover:text-green-300"
+              <ButtonLink
+                href={NPM_URL}
                 target="_blank"
+                rel="noreferrer"
+                variant="quiet"
+                className="mt-6"
               >
-                Read the package docs <ArrowRight className="h-4 w-4" />
-              </a>
+                Read the package docs <ArrowRight className="size-4" />
+              </ButtonLink>
             </div>
-            <div className="relative border-t border-slate-800 bg-slate-900 lg:col-span-2 lg:border-t-0 lg:border-l">
-              <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
-                <span className="font-mono text-xs text-slate-500">app.ts</span>
+            <div className="min-w-0 overflow-hidden rounded-card bg-ink text-white shadow-soft">
+              <div className="flex items-center justify-between border-b border-white/15 px-5 py-3">
+                <span className="font-mono text-xs text-white/60">app.ts</span>
                 <button
                   onClick={() => void copyCode()}
-                  className="text-xs font-semibold text-slate-400 hover:text-white"
+                  className="font-heading text-xs font-bold text-white/70 transition hover:text-white"
                 >
                   {copiedCode ? "Copied" : "Copy code"}
                 </button>
               </div>
-              <pre className="max-h-[32rem] overflow-auto p-5 font-mono text-xs leading-6 whitespace-pre text-slate-300">
+              <pre className="max-h-[32rem] overflow-auto p-5 font-mono text-xs leading-6 whitespace-pre text-white/90">
                 <CodeHighlight code={code} language="javascript" />
               </pre>
             </div>
-          </section>
+          </div>
+        </section>
+      </main>
 
-          <footer className="mt-16 flex flex-col gap-3 border-t border-line py-8 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-            <p className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
-              Dependency-free constraint engine
-            </p>
-            <p>Apache-2.0 · Built by Hugging Face</p>
-          </footer>
-        </main>
-      </div>
+      <SiteFooter />
     </div>
   );
 }

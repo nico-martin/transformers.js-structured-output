@@ -1,23 +1,54 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Nunito:wght@700;800;900&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Newsreader", ui-serif, Georgia, serif;
-  --font-mono: "DM Mono", ui-monospace, monospace;
-  --color-paper: #f4f1ea;
-  --color-ink: #17201f;
-  --color-coral: #e15f43;
-  --color-line: #ddd9d0;
-  --shadow-card:
-    0 1px 2px rgb(23 32 31 / 0.04), 0 10px 28px rgb(23 32 31 / 0.035);
-  --shadow-button: 0 2px 0 rgb(0 0 0 / 0.15), 0 6px 18px rgb(23 32 31 / 0.12);
-  --shadow-green:
-    0 1px 2px rgb(22 101 52 / 0.05), 0 14px 35px rgb(22 101 52 / 0.08);
-  --container-page: 1180px;
-  --grid-template-columns-hero: minmax(0, 1.5fr) minmax(300px, 0.5fr);
-  --grid-template-columns-reliability: 86px minmax(0, 1fr);
-  --grid-template-columns-25: repeat(25, minmax(0, 1fr));
+  --color-brand: #00796b;
+  --color-brand-deep: #00695c;
+  --color-brand-tint: #dff2ee;
+  --color-brand-tint-strong: #b9e6df;
+  --color-ink: #15171c;
+  --color-body: #5b6068;
+  --color-muted: #666b73;
+  --color-faint: #a3a9b1;
+  --color-yellow: #f5c842;
+  --color-yellow-tint: #fdf3d6;
+  --color-yellow-ink: #caa018;
+  --color-pink: #ee5fa7;
+  --color-pink-tint: #fdf3f5;
+  --color-peri: #7c82e8;
+  --color-peri-tint: #eef0ff;
+  --color-alert: #d93a2e;
+  --color-alert-tint: #fdeceb;
+  --color-surface-muted: #f7f8f9;
+  --color-surface-border: #b9bec6;
+  --font-heading: "Nunito", system-ui, sans-serif;
+  --font-sans: "Nunito Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius-card: 1.25rem;
+  --radius-tile: 0.875rem;
+  --tracking-display: -0.04em;
+  --tracking-heading: -0.02em;
+  --tracking-eyebrow: 0.14em;
+  --animate-rise: rise-in 0.62s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  --shadow-soft:
+    0 1px 2px rgb(21 23 28 / 0.04), 0 12px 32px rgb(21 23 28 / 0.06);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 @layer base {
@@ -30,8 +61,35 @@
   body {
     margin: 0;
     min-width: 320px;
+    background: white;
+    color: var(--color-body);
     font-family: var(--font-sans);
-    background: var(--color-paper);
+    font-weight: 300;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    color: var(--color-brand);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-brand-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   button,
   select,
@@ -41,13 +99,38 @@
   button {
     cursor: pointer;
   }
+  ::selection {
+    background: var(--color-brand-tint);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding-inline: 2.5rem;
+  }
+  .section {
+    padding-top: 6rem;
+  }
+  .display {
+    font-size: clamp(3rem, 6vw, 4.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+  .section-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    letter-spacing: -0.04em;
+  }
+  .lead {
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
 }
 
 @layer utilities {
-  .grain {
-    opacity: 0.16;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
-  }
   .scrollbar-none {
     scrollbar-width: none;
   }
@@ -64,25 +147,27 @@
     background: currentColor;
     animation: blink 0.8s steps(2) infinite;
   }
+
+  /* Prism on ink backgrounds */
   .token.comment,
   .token.prolog,
   .token.doctype,
   .token.cdata {
-    color: #64748b;
+    color: #8a9099;
   }
   .token.punctuation {
-    color: #94a3b8;
+    color: rgb(255 255 255 / 0.5);
   }
   .token.property,
   .token.tag,
   .token.constant,
   .token.symbol,
   .token.deleted {
-    color: #fb7185;
+    color: var(--color-yellow);
   }
   .token.boolean,
   .token.number {
-    color: #fbbf24;
+    color: var(--color-pink);
   }
   .token.selector,
   .token.attr-name,
@@ -90,51 +175,61 @@
   .token.char,
   .token.builtin,
   .token.inserted {
-    color: #86efac;
+    color: var(--color-brand-tint-strong);
   }
   .token.operator,
   .token.entity,
   .token.url,
   .token.variable {
-    color: #67e8f9;
+    color: rgb(255 255 255 / 0.8);
   }
   .token.atrule,
   .token.attr-value,
   .token.function,
   .token.class-name {
-    color: #c4b5fd;
+    color: #aab0f5;
   }
   .token.keyword {
-    color: #fb7185;
+    color: var(--color-pink);
   }
   .token.regex,
   .token.important {
-    color: #fdba74;
+    color: var(--color-yellow);
   }
+
+  /* Prism on white backgrounds */
   .prism-light .token.punctuation {
-    color: #64748b;
+    color: var(--color-muted);
   }
   .prism-light .token.property,
   .prism-light .token.keyword {
-    color: #be123c;
+    color: var(--color-ink);
+    font-weight: 600;
   }
   .prism-light .token.boolean,
   .prism-light .token.number {
-    color: #a16207;
+    color: #c2317f;
   }
   .prism-light .token.string,
   .prism-light .token.builtin {
-    color: #15803d;
+    color: var(--color-brand-deep);
   }
   .prism-light .token.function,
   .prism-light .token.class-name {
-    color: #6d28d9;
+    color: #5158cf;
+  }
+  .prism-light .token.operator,
+  .prism-light .token.variable {
+    color: var(--color-body);
   }
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0;
+@media (max-width: 61.25rem) {
+  .wrap {
+    padding-inline: 1.5rem;
+  }
+  .section {
+    padding-top: 4.5rem;
   }
 }
 
@@ -144,5 +239,7 @@
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

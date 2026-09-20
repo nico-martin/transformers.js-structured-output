@@ -2,6 +2,7 @@ import { CheckCircle2, CircleAlert, Clock3, Gauge } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge, CodeHighlight } from "../theme";
 import type { RunState } from "../types";
+import cn from "../utils/classnames";
 
 interface OutputInspectorProps {
   output: string;
@@ -50,10 +51,10 @@ export default function OutputInspector({
   })();
 
   return (
-    <section className={`flex min-h-72 flex-col bg-white ${className}`}>
-      <div className="flex h-14 items-center justify-between border-b border-line px-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold text-ink">{title}</span>
+    <section className={cn("flex min-h-72 flex-col bg-white", className)}>
+      <div className="flex h-14 items-center justify-between gap-3 border-b-2 border-ink px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <h3 className="text-base">{title}</h3>
           {badge}
         </div>
         {actions}
@@ -61,76 +62,76 @@ export default function OutputInspector({
       <div className="relative flex flex-1 flex-col">
         {error ? (
           <div className="flex min-h-56 flex-1 flex-col p-5">
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-              <p className="flex items-center gap-1.5 text-xs font-semibold text-red-700">
-                <CircleAlert className="h-3.5 w-3.5" /> Generation failed
+            <div className="rounded-tile border-2 border-alert/40 bg-alert-tint p-4">
+              <p className="flex items-center gap-1.5 font-heading text-xs font-bold text-alert">
+                <CircleAlert className="size-4" /> Generation failed
               </p>
-              <pre className="mt-2 font-mono text-xs leading-5 whitespace-pre-wrap text-red-800">
+              <pre className="mt-2 font-mono text-xs leading-5 whitespace-pre-wrap text-ink">
                 {error}
               </pre>
             </div>
             {output ? (
-              <pre className="prism-light mt-4 flex-1 overflow-auto font-mono text-sm leading-7 whitespace-pre-wrap text-slate-500">
+              <pre className="prism-light mt-4 flex-1 overflow-auto font-mono text-sm leading-7 whitespace-pre-wrap text-muted">
                 <CodeHighlight code={output} language={outputLanguage} />
               </pre>
             ) : null}
           </div>
         ) : output ? (
-          <pre className="prism-light min-h-56 flex-1 overflow-auto p-5 font-mono text-sm leading-7 whitespace-pre-wrap text-slate-700">
+          <pre className="prism-light min-h-56 flex-1 overflow-auto p-5 font-mono text-sm leading-7 whitespace-pre-wrap text-ink">
             <CodeHighlight code={visibleOutput} language={outputLanguage} />
             {busy ? <span className="stream-cursor" /> : null}
           </pre>
         ) : (
           <div className="flex min-h-56 flex-1 flex-col items-center justify-center p-8 text-center">
-            <span className="mb-4 grid h-12 w-12 place-items-center rounded-xl border border-dashed border-slate-300 text-slate-400">
+            <span className="mb-4 grid size-14 place-items-center rounded-tile bg-surface-muted font-mono text-lg text-muted">
               {busy ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-coral" />
+                <span className="size-5 animate-spin rounded-full border-2 border-brand-tint-strong border-t-brand" />
               ) : (
-                <span className="font-mono text-lg">{`{ }`}</span>
+                "{ }"
               )}
             </span>
-            <p className="text-sm font-semibold text-slate-600">
+            <p className="font-heading text-sm font-bold text-ink">
               {busy
                 ? "Loading the local model"
                 : "Your constrained output appears here"}
             </p>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-muted">
               Generated locally. Nothing is sent to a server.
             </p>
           </div>
         )}
       </div>
-      <div className="flex min-h-14 flex-wrap items-center justify-between gap-2 border-t border-line bg-stone-50 px-4 py-2.5">
+      <div className="flex min-h-14 flex-wrap items-center justify-between gap-2 border-t-2 border-ink bg-surface-muted px-5 py-2.5">
         <div className="flex items-center gap-2">
           {error ? (
-            <Badge tone="red">
-              <CircleAlert className="mr-1 h-3 w-3" />
+            <Badge tone="alert">
+              <CircleAlert className="size-3" />
               constraint failed
             </Badge>
           ) : valid === undefined ? (
             <Badge>
-              <Clock3 className="mr-1 h-3 w-3" />
+              <Clock3 className="size-3" />
               waiting
             </Badge>
           ) : valid ? (
-            <Badge tone="green">
-              <CheckCircle2 className="mr-1 h-3 w-3" />
+            <Badge tone="brand">
+              <CheckCircle2 className="size-3" />
               {validationLabel}
             </Badge>
           ) : (
-            <Badge tone="red">
-              <CircleAlert className="mr-1 h-3 w-3" />
+            <Badge tone="alert">
+              <CircleAlert className="size-3" />
               {validationLabel}
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-3 font-mono text-xs text-slate-400">
+        <div className="flex items-center gap-3 font-mono text-xs text-muted">
           <span className="flex items-center gap-1">
-            <Clock3 className="h-3 w-3" />
+            <Clock3 className="size-3" />
             {elapsed ? `${(elapsed / 1000).toFixed(1)}s` : "—"}
           </span>
           <span className="flex items-center gap-1">
-            <Gauge className="h-3 w-3" />
+            <Gauge className="size-3" />
             {tokensPerSecond ? `${tokensPerSecond} tok/s` : "—"}
           </span>
         </div>

@@ -1,5 +1,5 @@
 import { Check, Copy, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CodeHighlight } from "../theme";
 
 interface CodeModalProps {
@@ -16,6 +16,7 @@ export default function CodeModal({
   onClose,
 }: CodeModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -34,42 +35,45 @@ export default function CodeModal({
   return (
     <dialog
       ref={dialogRef}
+      aria-labelledby={titleId}
       onClose={onClose}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-4xl overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-0 text-slate-200 shadow-2xl backdrop:bg-ink/60 backdrop:backdrop-blur-sm"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-4xl overflow-hidden rounded-card border-2 border-ink bg-ink p-0 text-white shadow-2xl backdrop:bg-ink/60 backdrop:backdrop-blur-xs"
     >
-      <div className="flex max-h-[85vh] flex-col">
-        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
-          <div>
-            <p className="text-sm font-semibold text-white">{title}</p>
-            <p className="font-mono text-xs text-slate-500">
+      <div className="flex max-h-[calc(100dvh-2rem)] flex-col">
+        <header className="flex shrink-0 items-center justify-between gap-4 border-b-2 border-ink bg-white px-5 py-4 sm:px-7">
+          <div className="min-w-0">
+            <h2 id={titleId} className="text-lg text-ink sm:text-xl">
+              {title}
+            </h2>
+            <p className="mt-0.5 font-mono text-xs text-muted">
               What the playground runs on Generate
             </p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => void copy()}
-              className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-full border-2 border-ink bg-white px-4 font-heading text-sm font-bold text-ink transition hover:bg-surface-muted"
             >
               {copied ? (
-                <Check className="h-3.5 w-3.5" />
+                <Check className="size-4" />
               ) : (
-                <Copy className="h-3.5 w-3.5" />
+                <Copy className="size-4" />
               )}
               {copied ? "Copied" : "Copy"}
             </button>
             <button
               onClick={onClose}
               aria-label="Close"
-              className="grid h-8 w-8 place-items-center rounded-md text-slate-400 hover:bg-slate-800 hover:text-white"
+              className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-ink bg-white text-ink transition hover:bg-surface-muted"
             >
-              <X className="h-4 w-4" />
+              <X className="size-5" />
             </button>
           </div>
-        </div>
-        <pre className="overflow-auto p-5 font-mono text-xs leading-6 whitespace-pre text-slate-300">
+        </header>
+        <pre className="min-h-0 overflow-auto p-5 font-mono text-xs leading-6 whitespace-pre text-white/90 sm:p-7">
           <CodeHighlight code={code} language="javascript" />
         </pre>
       </div>

@@ -15,7 +15,7 @@ import {
   type PlaygroundPreset,
   type PlaygroundPresetId,
 } from "../data/playground";
-import { Badge, Button, Card, Chip } from "../theme";
+import { Badge, Button, Card, Chip, Eyebrow } from "../theme";
 import type { JsonSchema, RunState, SchemaProperty } from "../types";
 import { executedCode, type CodeVariant } from "../utils/executedCode";
 import { validateOutput } from "../utils/schema";
@@ -317,24 +317,21 @@ ${demoOutput(schema)}
   };
 
   return (
-    <section id="playground" className="scroll-mt-4">
-      <div className="mb-3 flex items-end justify-between">
+    <>
+      <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="font-mono text-xs font-semibold tracking-wider text-coral uppercase">
-            Live playground
-          </p>
-          <h2 className="mt-1 font-serif text-3xl font-semibold">
-            Try a constraint
-          </h2>
+          <Eyebrow>Live playground</Eyebrow>
+          <h2 className="section-title mt-5">Try a constraint</h2>
         </div>
-        <p className="hidden text-xs text-slate-400 sm:block">
-          First run downloads the model. Then it stays cached.
+        <p className="m-0 max-w-sm text-muted">
+          The first run downloads the model. After that it stays cached on your
+          device.
         </p>
       </div>
 
-      <Card className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-line bg-white px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="scrollbar-none flex gap-2 overflow-x-auto">
+      <Card padded={false} className="mt-8 animate-rise overflow-hidden">
+        <div className="flex flex-col gap-4 border-b-2 border-ink px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="scrollbar-none -mx-5 flex gap-2 overflow-x-auto px-5 py-1 lg:mx-0 lg:px-0">
             {PLAYGROUND_PRESETS.map((preset) => (
               <Chip
                 key={preset.id}
@@ -346,38 +343,42 @@ ${demoOutput(schema)}
               </Chip>
             ))}
           </div>
-          <label className="relative flex shrink-0 items-center gap-2 text-xs text-slate-500">
-            <span className="h-2 w-2 rounded-full bg-green-500" />
+          <label className="relative flex shrink-0 items-center gap-3 font-mono text-xs text-muted">
             <span className="hidden sm:inline">Model</span>
-            <select
-              value={modelId}
-              onChange={(event) => {
-                setModelId(event.target.value);
-                setModelProgress(0);
-                resetOutput();
-              }}
-              disabled={busy}
-              className="h-9 appearance-none rounded-lg border border-line bg-white py-0 pr-8 pl-3 text-xs font-semibold text-ink outline-none hover:border-slate-400 disabled:opacity-50"
-            >
-              {PLAYGROUND_MODELS.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.label} · {model.dtype}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-slate-400" />
+            <span className="relative">
+              <select
+                value={modelId}
+                onChange={(event) => {
+                  setModelId(event.target.value);
+                  setModelProgress(0);
+                  resetOutput();
+                }}
+                disabled={busy}
+                className="min-h-10 appearance-none rounded-full border-2 border-ink bg-white py-0 pr-9 pl-4 font-heading text-sm font-bold text-ink outline-none transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-45"
+              >
+                {PLAYGROUND_MODELS.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.label} · {model.dtype}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-ink"
+                strokeWidth={2.5}
+              />
+            </span>
           </label>
         </div>
 
-        <div className="border-b border-line bg-white p-4">
+        <div className="border-b-2 border-ink bg-surface-muted p-5">
           <div className="mb-2 flex items-center justify-between">
             <label
               htmlFor="prompt"
-              className="text-xs font-semibold text-slate-600"
+              className="font-heading text-xs font-bold tracking-eyebrow text-muted uppercase"
             >
               Prompt
             </label>
-            <span className="font-mono text-xs text-slate-400">
+            <span className="font-mono text-xs text-faint">
               {prompt.length} chars
             </span>
           </div>
@@ -389,17 +390,17 @@ ${demoOutput(schema)}
               setPrompt(event.target.value);
               markCustom();
             }}
-            className="min-h-32 w-full resize-y rounded-lg border border-line bg-stone-50 p-4 text-sm leading-6 text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white"
+            className="min-h-32 w-full resize-y rounded-tile border-2 border-ink bg-white p-4 text-base leading-7 text-ink shadow-soft outline-none transition placeholder:text-faint focus:border-brand focus:ring-4 focus:ring-brand/20"
           />
         </div>
 
-        <div className="grid lg:grid-cols-2">
-          <div className="flex flex-col border-b border-line lg:border-r lg:border-b-0">
-            <div className="flex h-14 items-center justify-between border-b border-slate-800 bg-slate-950 px-4">
-              <span className="text-xs font-semibold text-white">
-                Constraint
+        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-2">
+          <div className="flex min-w-0 flex-col border-b-2 border-ink lg:border-r-2 lg:border-b-0">
+            <div className="flex h-14 items-center justify-between bg-ink px-5">
+              <h3 className="text-base text-white">Constraint</h3>
+              <span className="font-mono text-xs text-brand-tint-strong">
+                editable
               </span>
-              <span className="font-mono text-xs text-slate-500">editable</span>
             </div>
             <ConstraintEditor
               mode={mode}
@@ -408,13 +409,13 @@ ${demoOutput(schema)}
               onChange={changeConstraint}
               className="flex-1"
             />
-            <div className="flex flex-col gap-3 border-t border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-xs text-slate-500">
+            <div className="flex flex-col gap-4 border-t-2 border-ink p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="font-mono text-xs text-muted">
                 {state === "loading" ? (
                   <span>Downloading model · {Math.round(modelProgress)}%</span>
                 ) : (
                   <span className="flex items-center gap-1.5">
-                    <LockKeyhole className="h-3.5 w-3.5" /> Runs locally in this
+                    <LockKeyhole className="size-3.5" /> Runs locally in this
                     tab
                   </span>
                 )}
@@ -422,12 +423,12 @@ ${demoOutput(schema)}
               <Button
                 onClick={() => void run()}
                 disabled={busy || !prompt.trim()}
-                className="sm:min-w-36"
+                className="sm:min-w-40"
               >
                 {busy ? (
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                  <LoaderCircle className="size-4 animate-spin" />
                 ) : (
-                  <Play className="h-4 w-4 fill-current" />
+                  <Play className="size-4 fill-current" />
                 )}
                 {state === "loading"
                   ? "Loading model"
@@ -437,7 +438,7 @@ ${demoOutput(schema)}
               </Button>
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className="flex min-w-0 flex-col">
             {VARIANTS.map((variant) => {
               const panel = panels[variant];
               const active = busy && phase === variant;
@@ -452,7 +453,7 @@ ${demoOutput(schema)}
                 <div
                   key={variant}
                   className={`flex flex-1 flex-col ${
-                    variant === "constrained" ? "border-b border-line" : ""
+                    variant === "constrained" ? "border-b-2 border-ink" : ""
                   }`}
                 >
                   <OutputInspector
@@ -472,16 +473,16 @@ ${demoOutput(schema)}
                     actions={
                       <button
                         onClick={() => setCodeFor(variant)}
-                        className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold text-slate-500 hover:bg-stone-100 hover:text-ink"
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border-2 border-ink bg-white px-3 py-1 font-heading text-xs font-bold text-ink transition hover:bg-surface-muted"
                       >
-                        <Code2 className="h-3.5 w-3.5" /> Code
+                        <Code2 className="size-3.5" strokeWidth={2.5} /> Code
                       </button>
                     }
                     badge={
                       !webGpu ? (
-                        <Badge tone="amber">demo</Badge>
+                        <Badge tone="yellow">demo</Badge>
                       ) : variant === "constrained" ? (
-                        <Badge tone="green">
+                        <Badge tone="brand">
                           {mode === "regex" ? "regex" : "json schema"}
                         </Badge>
                       ) : (
@@ -513,6 +514,6 @@ ${demoOutput(schema)}
           regex,
         })}
       />
-    </section>
+    </>
   );
 }

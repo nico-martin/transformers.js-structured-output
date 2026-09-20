@@ -22,14 +22,14 @@ export interface PlaygroundPreset {
 
 export const PLAYGROUND_MODELS = [
   {
-    id: "onnx-community/gemma-4-E2B-it-ONNX",
-    label: "Gemma 4 E2B",
-    dtype: "q4f16",
-  },
-  {
     id: "onnx-community/LFM2.5-350M-ONNX",
     label: "LFM2.5 350M",
     dtype: "q4",
+  },
+  {
+    id: "onnx-community/gemma-4-E2B-it-ONNX",
+    label: "Gemma 4 E2B",
+    dtype: "q4f16",
   },
   {
     id: "onnx-community/granite-4.0-h-micro-ONNX",

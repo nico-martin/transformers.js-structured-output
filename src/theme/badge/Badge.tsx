@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 import cn from "../../utils/classnames";
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  tone?: "neutral" | "green" | "red" | "amber";
+  tone?: "neutral" | "brand" | "yellow" | "pink" | "alert";
   children: ReactNode;
   className?: string;
 }
@@ -16,12 +16,13 @@ export default function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2 py-1 font-mono text-xs font-semibold",
+        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-heading text-xs font-bold whitespace-nowrap",
         {
-          "border-line bg-stone-50 text-slate-600": tone === "neutral",
-          "border-green-200 bg-green-50 text-green-800": tone === "green",
-          "border-red-200 bg-red-50 text-red-700": tone === "red",
-          "border-amber-200 bg-amber-50 text-amber-800": tone === "amber",
+          "bg-surface-muted text-body": tone === "neutral",
+          "bg-brand-tint text-brand-deep": tone === "brand",
+          "bg-yellow-tint text-yellow-ink": tone === "yellow",
+          "bg-pink-tint text-pink": tone === "pink",
+          "bg-alert-tint text-alert": tone === "alert",
         },
         className
       )}

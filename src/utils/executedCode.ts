@@ -21,11 +21,16 @@ function indent(text: string, spaces: number): string {
     .join("\n");
 }
 
-function templateLiteral(text: string): string {
-  return `\`${text
-    .replace(/\\/g, "\\\\")
-    .replace(/`/g, "\\`")
-    .replace(/\$\{/g, "\\${")}\``;
+function stringLiteral(line: string): string {
+  if (line.includes('"') && !line.includes("'")) {
+    return `'${line.replace(/\\/g, "\\\\")}'`;
+  }
+  return JSON.stringify(line);
+}
+
+function contentLines(text: string): string {
+  const lines = text.split("\n").map((line) => `      ${stringLiteral(line)},`);
+  return `[\n${lines.join("\n")}\n    ].join("\\n")`;
 }
 
 function parseSchema(schemaText: string): unknown {
@@ -81,7 +86,7 @@ const generator = await pipeline(
 const messages = [
   {
     role: "user",
-    content: ${templateLiteral(content)},
+    content: ${contentLines(content)},
   },
 ];
 

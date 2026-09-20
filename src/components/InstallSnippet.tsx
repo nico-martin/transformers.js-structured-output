@@ -1,5 +1,6 @@
-import { Check, Copy, Terminal } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { Card } from "../theme";
 
 interface InstallSnippetProps {
   className?: string;
@@ -20,20 +21,32 @@ export default function InstallSnippet({
   };
 
   return (
-    <button
-      onClick={() => void copy()}
-      className={`group flex max-w-full items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left shadow-lg ${className}`}
+    <Card
+      padded={false}
+      className={`w-full max-w-lg overflow-hidden ${className}`}
     >
-      <Terminal className="h-4 w-4 shrink-0 text-green-400" />
-      <code className="truncate font-mono text-xs text-slate-200 sm:text-sm">
-        <span className="text-slate-500">$ </span>
-        {INSTALL_COMMAND}
-      </code>
-      {copied ? (
-        <Check className="h-4 w-4 shrink-0 text-green-400" />
-      ) : (
-        <Copy className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-white" />
-      )}
-    </button>
+      <div className="flex items-center justify-between border-b-2 border-ink py-2 pr-2 pl-5">
+        <span className="font-heading text-xs font-bold tracking-eyebrow text-muted uppercase">
+          Install
+        </span>
+        <button
+          onClick={() => void copy()}
+          className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 font-heading text-xs font-bold text-ink transition hover:bg-surface-muted"
+        >
+          {copied ? (
+            <Check className="size-3.5" />
+          ) : (
+            <Copy className="size-3.5" />
+          )}
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <pre className="scrollbar-none overflow-x-auto bg-ink px-5 py-4 font-mono text-[13px] leading-6 whitespace-pre text-white">
+        <span className="text-brand-tint-strong">$ </span>
+        {
+          "npm i @huggingface/transformers \\\n        @huggingface/transformers-structured-output"
+        }
+      </pre>
+    </Card>
   );
 }

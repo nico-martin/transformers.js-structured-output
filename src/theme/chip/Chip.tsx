@@ -14,12 +14,12 @@ export default function Chip({
 }: ChipProps) {
   return (
     <button
+      aria-pressed={active}
       className={cn(
-        "shrink-0 rounded-full border px-3.5 py-2 text-sm font-medium transition",
+        "shrink-0 rounded-full border-2 px-4 py-1.5 font-heading text-sm font-bold transition",
         {
           "border-ink bg-ink text-white": active,
-          "border-line bg-white text-slate-600 hover:border-slate-400 hover:text-ink":
-            !active,
+          "border-ink bg-white text-body hover:text-ink": !active,
         },
         className
       )}
