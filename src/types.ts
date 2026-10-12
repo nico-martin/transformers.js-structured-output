@@ -16,6 +16,11 @@ export interface SchemaProperty {
   enum?: Array<string | number>;
   minimum?: number;
   maximum?: number;
+  pattern?: string;
+  minLength?: number;
+  maxLength?: number;
+  minItems?: number;
+  maxItems?: number;
   items?: SchemaProperty | JsonSchema;
 }
 

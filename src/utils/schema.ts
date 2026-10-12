@@ -23,7 +23,18 @@ function validateValue(
   property: SchemaProperty
 ): string | undefined {
   if (property.type === "array") {
-    return Array.isArray(value) ? undefined : "not an array";
+    if (!Array.isArray(value)) return "not an array";
+    if (property.minItems !== undefined && value.length < property.minItems)
+      return `fewer than ${property.minItems} items`;
+    if (property.maxItems !== undefined && value.length > property.maxItems)
+      return `more than ${property.maxItems} items`;
+    if (property.items && property.items.type !== "object") {
+      for (const item of value) {
+        const reason = validateValue(item, property.items);
+        if (reason) return `invalid item: ${reason}`;
+      }
+    }
+    return undefined;
   }
   if (property.type === "integer") {
     if (!Number.isInteger(value)) return "not an integer";
@@ -32,6 +43,20 @@ function validateValue(
   }
   if (property.enum && !property.enum.includes(value as string | number)) {
     return "not in enum";
+  }
+  if (typeof value === "string") {
+    const length = Array.from(value).length;
+    if (property.minLength !== undefined && length < property.minLength)
+      return `shorter than ${property.minLength} characters`;
+    if (property.maxLength !== undefined && length > property.maxLength)
+      return `longer than ${property.maxLength} characters`;
+  }
+  if (
+    typeof value === "string" &&
+    property.pattern &&
+    !new RegExp(property.pattern).test(value)
+  ) {
+    return "does not match pattern";
   }
   if (
     property.format === "iso-date" &&

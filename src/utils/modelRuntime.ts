@@ -7,7 +7,6 @@ import {
 import { StructuredOutputProcessor } from "@huggingface/transformers-structured-output";
 import type { ResponseFormat } from "@huggingface/transformers-structured-output";
 import { PLAYGROUND_MODELS, type ConstraintMode } from "../data/playground";
-import { buildPrompt } from "./promptBuilder";
 
 interface ProgressInfo {
   status: string;
@@ -76,9 +75,7 @@ export async function generateLocalOutput({
   onToken: (text: string) => void;
 }): Promise<{ raw: string; elapsed: number; tokensPerSecond: number }> {
   const { generator } = await loadRuntime(modelId, onProgress);
-  const messages = [
-    { role: "user", content: buildPrompt(input, mode, schema, regex) },
-  ];
+  const messages = [{ role: "user", content: input }];
   let raw = "";
   let tokenCount = 0;
   const started = performance.now();

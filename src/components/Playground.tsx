@@ -48,9 +48,6 @@ interface PlaygroundProps {
 }
 
 const INITIAL = PLAYGROUND_PRESETS[0];
-const REGEX_PRESET = PLAYGROUND_PRESETS.find(
-  (preset) => preset.mode === "regex"
-);
 
 function createValue(property: SchemaProperty): unknown {
   if (property.enum?.length) return property.enum[0];
@@ -118,7 +115,7 @@ export default function Playground({ onConstraintChange }: PlaygroundProps) {
     INITIAL.id
   );
   const [modelId, setModelId] = useState<string>(PLAYGROUND_MODELS[0].id);
-  const [prompt, setPrompt] = useState(INITIAL.prompt);
+  const [prompt, setPrompt] = useState(INITIAL.prompts[INITIAL.mode]);
   const [mode, setMode] = useState<ConstraintMode>(INITIAL_CONSTRAINT.mode);
   const [schemaText, setSchemaText] = useState(INITIAL_CONSTRAINT.schemaText);
   const [regex, setRegex] = useState(INITIAL_CONSTRAINT.regex);
@@ -155,20 +152,18 @@ export default function Playground({ onConstraintChange }: PlaygroundProps) {
     setState("idle");
   };
 
-  const applyPreset = (preset: PlaygroundPreset) => {
+  const applyPreset = (preset: PlaygroundPreset, nextMode = mode) => {
     if (preset.id === "custom" && activePreset === "custom") return;
-    const nextSchemaText = preset.schema
-      ? JSON.stringify(preset.schema, null, 2)
-      : schemaText;
-    const nextRegex = preset.regex ?? regex;
+    const nextSchemaText = JSON.stringify(preset.schema, null, 2);
+    const nextRegex = preset.regex;
     setActivePreset(preset.id);
-    setPrompt(preset.prompt);
-    setMode(preset.mode);
+    setPrompt(preset.prompts[nextMode]);
+    setMode(nextMode);
     setSchemaText(nextSchemaText);
     setRegex(nextRegex);
     resetOutput();
     publishConstraint({
-      mode: preset.mode,
+      mode: nextMode,
       schemaText: nextSchemaText,
       regex: nextRegex,
     });
@@ -178,6 +173,11 @@ export default function Playground({ onConstraintChange }: PlaygroundProps) {
 
   const changeMode = (nextMode: ConstraintMode) => {
     if (nextMode === mode) return;
+    const preset = PLAYGROUND_PRESETS.find((item) => item.id === activePreset);
+    if (preset && preset.id !== "custom") {
+      applyPreset(preset, nextMode);
+      return;
+    }
     setMode(nextMode);
     markCustom();
     resetOutput();
@@ -202,10 +202,9 @@ export default function Playground({ onConstraintChange }: PlaygroundProps) {
 
   const demoOutput = (schema: unknown): string => {
     const preset = PLAYGROUND_PRESETS.find((item) => item.id === activePreset);
+    if (preset && preset.id !== "custom") return preset.samples[mode];
     if (mode === "regex") {
-      return preset?.mode === "regex"
-        ? preset.sample
-        : (REGEX_PRESET?.sample ?? "");
+      return preset?.samples.regex ?? "";
     }
     try {
       return JSON.stringify(
@@ -214,18 +213,18 @@ export default function Playground({ onConstraintChange }: PlaygroundProps) {
         2
       );
     } catch {
-      return preset?.sample ?? "{}";
+      return preset?.samples.json_schema ?? "{}";
     }
   };
 
   const demoFreeOutput = (schema: unknown): string =>
     mode === "regex"
-      ? `Sure! Based on the message, I'd classify this as follows:
+      ? `Sure! Here is the result:
 
 ${demoOutput(schema)}
 
-Let me know if you'd like me to adjust the priority.`
-      : `Here is the extracted information:
+Let me know if you'd like any changes.`
+      : `Here is the result:
 
 \`\`\`json
 ${demoOutput(schema)}
@@ -390,7 +389,7 @@ ${demoOutput(schema)}
               setPrompt(event.target.value);
               markCustom();
             }}
-            className="min-h-32 w-full resize-y rounded-tile border-2 border-ink bg-white p-4 text-base leading-7 text-ink shadow-soft outline-none transition placeholder:text-faint focus:border-brand focus:ring-4 focus:ring-brand/20"
+            className="min-h-48 w-full resize-y rounded-tile border-2 border-ink bg-white p-4 text-base leading-7 text-ink shadow-soft outline-none transition placeholder:text-faint focus:border-brand focus:ring-4 focus:ring-brand/20"
           />
         </div>
 

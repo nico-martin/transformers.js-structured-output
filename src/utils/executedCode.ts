@@ -1,5 +1,4 @@
 import type { ConstraintMode } from "../data/playground";
-import { buildPrompt } from "./promptBuilder";
 
 export type CodeVariant = "constrained" | "free";
 
@@ -51,12 +50,6 @@ export function executedCode({
   regex,
 }: ExecutedCodeInput): string {
   const schema = parseSchema(schemaText);
-  const content = buildPrompt(
-    prompt,
-    mode,
-    mode === "json_schema" ? schema : undefined,
-    regex
-  );
   const responseFormat =
     mode === "json_schema"
       ? `{
@@ -82,11 +75,11 @@ const generator = await pipeline(
   { dtype: ${JSON.stringify(dtype)}, device: "webgpu" }
 );
 
-// 2. The chat messages. The instruction is appended to your prompt.
+// 2. The chat messages, exactly as entered in the playground.
 const messages = [
   {
     role: "user",
-    content: ${contentLines(content)},
+    content: ${contentLines(prompt)},
   },
 ];
 
