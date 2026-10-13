@@ -22,6 +22,7 @@ let runtimePromise: Promise<LoadedRuntime> | undefined;
 let loadedRuntime: LoadedRuntime | undefined;
 
 env.useBrowserCache = true;
+env.experimental_useCrossOriginStorage = true;
 
 async function loadRuntime(
   modelId: string,
