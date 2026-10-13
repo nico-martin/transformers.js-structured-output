@@ -3,6 +3,7 @@ import {
   cpSync,
   existsSync,
   mkdtempSync,
+  readFileSync,
   readdirSync,
   rmSync,
   writeFileSync,
@@ -15,6 +16,8 @@ const SPACE_REPOSITORY =
   "git@hf.co:spaces/nico-martin/transformers.js-structured-output";
 const SPACE_URL =
   "https://huggingface.co/spaces/nico-martin/transformers.js-structured-output";
+const GITHUB_URL =
+  "https://github.com/nico-martin/transformers.js-structured-output";
 const projectDirectory = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDirectory = join(projectDirectory, "dist");
 
@@ -62,6 +65,19 @@ try {
       "---\ntitle: Transformers.js Structured Output\nsdk: static\napp_file: index.html\npinned: false\n---\n"
     );
   }
+  const githubContext =
+    `This playground showcases JSON Schema and regex constraints for language models running locally in the browser with Transformers.js. Compare constrained and unconstrained output with event extraction, color palette, and URL slug examples.\n\n` +
+    `Explore the implementation and run the demo yourself in the [GitHub repository](${GITHUB_URL}).`;
+  let readme = readFileSync(readmePath, "utf8")
+    .replace(
+      /^Check out the configuration reference at https:\/\/huggingface\.co\/docs\/hub\/spaces-config-reference[^\r\n]*\r?\n?/gm,
+      ""
+    )
+    .replace(`[Source code on GitHub](${GITHUB_URL})`, githubContext);
+  if (!readme.includes(GITHUB_URL)) {
+    readme = `${readme.trimEnd()}\n\n${githubContext}\n`;
+  }
+  writeFileSync(readmePath, `${readme.trimEnd()}\n`);
 
   run("git", ["add", "--all"], { cwd: spaceDirectory });
   const diff = spawnSync("git", ["diff", "--cached", "--quiet"], {
